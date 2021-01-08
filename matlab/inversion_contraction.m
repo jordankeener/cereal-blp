@@ -1,7 +1,7 @@
-function delta = inversion_contraction(d0, sigma, s, x, p, draws, mkt_ids)
+function delta = inversion_contraction(d0, sigma, s, x, draws, mkt_ids)
 % computes mean utilities given sigma using BLP contraction mapping
 
-    tol = 1e-5;
+    tol = 1e-12;
     error = tol + 1;
     
     while error > tol

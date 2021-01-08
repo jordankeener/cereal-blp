@@ -1,8 +1,6 @@
-function [beta, res] = ivreg_2sls(y,x,z_incl,z_excl)
-% estimates IV regression using 2SLS (no constant term)
-% returns [beta_const, beta_x, beta_z_incl]
-
-    [n, ~] = size(x);
+function [beta, res] = ivreg_2sls(y, x, z_incl, z_excl)
+% estimates IV regression using 2SLS
+% returns [beta_x, beta_z_incl]
     
     Z = [z_incl, z_excl];
     P_Z = Z / (Z'*Z) * Z';

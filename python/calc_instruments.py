@@ -1,11 +1,18 @@
 import pandas as pd
 import numpy as np
 
+try:
+    datadir = '../data/'
 
-datadir = 'data/'
-
-# simulated cereal sales dataset
-df = pd.read_csv(datadir + 'cereal_data.csv')
+    # simulated cereal sales dataset
+    df = pd.read_csv(datadir + 'cereal_data.csv')
+except FileNotFoundError:
+    datadir = 'data/'
+    
+     # simulated cereal sales dataset
+    df = pd.read_csv(datadir + 'cereal_data.csv')
+    
+    
 
 
 mkt_id = ['city', 'year', 'quarter']
@@ -32,12 +39,21 @@ df[['mkt_mean_sugar', 'mkt_mean_mushy']] = df.groupby(by = mkt_id)[['sugar', 'mu
 # create BLP style instruments
 firm_mkt = ['firm_id'] + mkt_id 
 chars = ['sugar', 'mushy']
+
+# rival characteristics
 blp_iv_rival = ['z_rival_sugar','z_rival_mushy']
 
 df[blp_iv_rival] = (df.groupby(mkt_id)[chars].transform('sum') -        \
                     df.groupby(firm_mkt)[chars].transform('sum')) /     \
                    (df.groupby(mkt_id)[chars].transform('count') -      \
                     df.groupby(firm_mkt)[chars].transform('count'))
+
+# (naive) own characteristics
+blp_iv_own = ['z_own_sugar', 'z_own_mushy']
+
+df[blp_iv_own] = (df.groupby('firm_id')[chars].transform('sum') - df[chars]) /   \
+    (df.groupby('firm_id')[chars].transform('count') - 1)
+
 
 
 # create Hausman instruments

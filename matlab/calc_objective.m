@@ -8,7 +8,7 @@ function [fval, alpha, beta] = calc_objective(lnsigma, p, x, z, s, draws, mkt_id
     
     % inversion to obtain mean utilities
     delta_init = zeros(size(p,1), 1);
-    delta = inversion_contraction(delta_init, sigma, s, x, p, draws, mkt_ids);
+    delta = inversion_contraction(delta_init, sigma, s, x, draws, mkt_ids);
     
     % IV regression of delta on (x,p) with z as instrument
     [gamma, res] = ivreg_2sls(delta, p, x, z);
@@ -17,7 +17,8 @@ function [fval, alpha, beta] = calc_objective(lnsigma, p, x, z, s, draws, mkt_id
     
     % calculate GMM objective function for given sigma
     Z = [x, z];
-    W = eye(size(Z,2));
+
+    W = inv(Z'*Z);
     fval = (res' * Z) * W * (Z' * res);
 end
 
