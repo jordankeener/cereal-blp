@@ -1,8 +1,6 @@
-function [fval, alpha, beta] = calc_objective(lnsigma, p, x, z, s, draws, mkt_ids)
+function [fval, alpha, beta] = calc_objective(sigma, p, x, z, s, draws, mkt_ids)
 % calculates objective function value for given value of sigma
-    
-    sigma = exp(lnsigma);
-    
+        
     K = size(x,2);
     L = K + 1;
     
@@ -18,7 +16,7 @@ function [fval, alpha, beta] = calc_objective(lnsigma, p, x, z, s, draws, mkt_id
     % calculate GMM objective function for given sigma
     Z = [x, z];
 
-    W = inv(Z'*Z);
+    W = (Z'*Z) \ eye(size(Z,2));    
     fval = (res' * Z) * W * (Z' * res);
 end
 

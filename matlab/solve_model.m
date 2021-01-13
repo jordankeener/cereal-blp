@@ -1,10 +1,9 @@
 function [alpha_hat, beta_hat, sigma_hat, gmm_obj] = solve_model(p, x, z, s, mkt_ids)
 
     K = size(x,2);
-    lnsigma0 = ones(K, 1);
+    sigma0 = ones(K, 1);
     
-    % generate RC draws for x
-    NS = 100;
+    NS = 200;
     rng(48104);
     draws = normrnd(0, 1, K, NS);
     
@@ -13,15 +12,16 @@ function [alpha_hat, beta_hat, sigma_hat, gmm_obj] = solve_model(p, x, z, s, mkt
         'GradObj', 'off', ...
         'MaxIter', 1000, ...
         'MaxFunEvals', 10000, ...
-        'TolFun', 1e-6, ...
-        'TolX', 1e-6);
+        'TolFun', 1e-8, ...
+        'TolX', 1e-5);
     
-
-    lnsigma_hat = fminunc(@(lnsigma) calc_objective(lnsigma, p, x, z, s, draws, mkt_ids), ...
-        lnsigma0, options);
     
-    sigma_hat = exp(lnsigma_hat);
+    lb = zeros(K, 1);
+    ub = ones(K, 1) * 100;
     
-    [gmm_obj, alpha_hat, beta_hat] = calc_objective(lnsigma_hat, p, x, z, s, draws, mkt_ids);
+    sigma_hat = fmincon(@(sigma) calc_objective(sigma, p, x, z, s, draws, mkt_ids), ...
+        sigma0, [], [], [], [], lb, ub, [], options);
+        
+    [gmm_obj, alpha_hat, beta_hat] = calc_objective(sigma_hat, p, x, z, s, draws, mkt_ids);
 end
 

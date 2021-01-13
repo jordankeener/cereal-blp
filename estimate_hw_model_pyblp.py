@@ -1,6 +1,6 @@
-import pandas as pd 
+import pandas as pd
 import numpy as np
-import pyblp 
+import pyblp
 
 
 # replicate setup of model from estimate_hw_model.m
@@ -42,7 +42,7 @@ print(product_data.isnull()[['demand_instruments1', 'demand_instruments2']].sum(
 
 
 # setup model and solve
-mc_integration = pyblp.Integration('monte_carlo', size=100, specification_options={'seed': 0})
+mc_integration = pyblp.Integration('monte_carlo', size=200, specification_options={'seed': 0})
 
 problem = pyblp.Problem(product_formulations=product_formulations,
                         product_data=product_data,
@@ -50,7 +50,7 @@ problem = pyblp.Problem(product_formulations=product_formulations,
 
 
 sigma0 = np.eye(3)
-bfgs = pyblp.Optimization('l-bfgs-b', {'gtol': 1e-6})
+bfgs = pyblp.Optimization('l-bfgs-b', {'gtol': 1e-8})
 
 results = problem.solve(sigma=sigma0,
                         method='1s',
